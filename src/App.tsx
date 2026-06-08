@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Sun, Moon, Table, BarChart2, FileSpreadsheet, EyeOff, LayoutGrid, HelpCircle } from 'lucide-react';
+import { Sun, Moon, Table, BarChart2, FileSpreadsheet, EyeOff, LayoutGrid, HelpCircle, Contrast } from 'lucide-react';
 import { SheetData, ColumnFilter } from './types';
 import { filterRows } from './lib/sheets';
 import DataLoader from './components/DataLoader';
@@ -19,6 +19,7 @@ export default function App() {
   const [globalSearch, setGlobalSearch] = useState('');
   const [activeTab, setActiveTab] = useState<'tabla' | 'graficas'>('tabla');
   const [isDark, setIsDark] = useState(true);
+  const [isBlack, setIsBlack] = useState(false);
 
   // Synchronously filter data as filters or search text evolves
   const filteredRows = React.useMemo(() => {
@@ -44,15 +45,53 @@ export default function App() {
   };
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 flex flex-col ${
-      isDark 
-        ? "bg-slate-950 text-slate-100 selection:bg-indigo-500/30 selection:text-indigo-200" 
-        : "bg-slate-50/50 text-slate-900 selection:bg-indigo-100 selection:text-indigo-800"
+    <div className={`min-h-screen transition-colors duration-300 flex flex-col ${isBlack ? "theme-black" : ""} ${
+      isBlack
+        ? "bg-black text-slate-100 selection:bg-indigo-500/30 selection:text-indigo-200"
+        : isDark 
+          ? "bg-slate-950 text-slate-100 selection:bg-indigo-500/30 selection:text-indigo-200" 
+          : "bg-slate-50/50 text-slate-900 selection:bg-indigo-100 selection:text-indigo-800"
     }`}>
+      {isBlack && (
+        <style>{`
+          .theme-black,
+          .theme-black .bg-slate-950,
+          .theme-black .bg-slate-950\\/80,
+          .theme-black .bg-slate-900\\/60,
+          .theme-black .bg-slate-900\\/10,
+          .theme-black .bg-slate-950\\/40,
+          .theme-black #app-header,
+          .theme-black #app-footer-notice {
+            background-color: #000000 !important;
+          }
+          .theme-black .bg-slate-900,
+          .theme-black .bg-slate-900\\/40,
+          .theme-black select,
+          .theme-black input:not([type="checkbox"]) {
+            background-color: #0c0c0e !important;
+          }
+          .theme-black .border-slate-900,
+          .theme-black .border-slate-850,
+          .theme-black .border-slate-805,
+          .theme-black .border-slate-800,
+          .theme-black .border-slate-800\\/30,
+          .theme-black select,
+          .theme-black input {
+            border-color: #1e1e24 !important;
+          }
+          .theme-black .text-slate-400 {
+            color: #81818d !important;
+          }
+        `}</style>
+      )}
       
       {/* 1. Header Bar */}
       <header className={`border-b transition-colors duration-300 sticky top-0 z-40 backdrop-blur-md ${
-        isDark ? "bg-slate-950/80 border-slate-900" : "bg-white/80 border-slate-100"
+        isBlack
+          ? "bg-black/80 border-neutral-900"
+          : isDark 
+            ? "bg-slate-950/80 border-slate-900" 
+            : "bg-white/80 border-slate-100"
       }`} id="app-header">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
@@ -65,12 +104,41 @@ export default function App() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            {/* Fondo Negro Button */}
+            <button
+              onClick={() => {
+                if (isBlack) {
+                  setIsBlack(false);
+                } else {
+                  setIsDark(true);
+                  setIsBlack(true);
+                }
+              }}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-[11px] font-semibold cursor-pointer transition-all ${
+                isBlack
+                  ? "border-purple-600/30 bg-purple-950/40 text-purple-400 font-bold"
+                  : isDark
+                    ? "border-slate-800 hover:border-slate-700 bg-slate-950 hover:bg-slate-900/80 text-slate-300"
+                    : "border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 text-slate-600"
+              }`}
+              title={isBlack ? "Desactivar fondo negro" : "Activar fondo negro (AMOLED)"}
+              id="black-mode-toggle-btn"
+            >
+              <Contrast size={13} className={isBlack ? "animate-pulse" : ""} />
+              <span>Fondo Negro</span>
+            </button>
+
             {/* Mode Switcher */}
             <button
-              onClick={() => setIsDark(!isDark)}
+              onClick={() => {
+                setIsDark(!isDark);
+                if (isDark) {
+                  setIsBlack(false);
+                }
+              }}
               className={`p-2 rounded-xl border transition-all cursor-pointer ${
-                isDark 
+                isDark && !isBlack
                   ? "border-slate-900 bg-slate-900/60 hover:bg-slate-900 text-amber-400" 
                   : "border-slate-150 bg-slate-50 hover:bg-slate-100 text-slate-600"
               }`}
