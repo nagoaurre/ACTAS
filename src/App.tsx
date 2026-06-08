@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Sun, Moon, Table, BarChart2, FileSpreadsheet, EyeOff, LayoutGrid, HelpCircle, Contrast } from 'lucide-react';
+import { Sun, Moon, Table, BarChart2, FileSpreadsheet, EyeOff, LayoutGrid, HelpCircle, Contrast, FileText } from 'lucide-react';
 import { SheetData, ColumnFilter } from './types';
 import { filterRows } from './lib/sheets';
 import DataLoader from './components/DataLoader';
@@ -12,12 +12,13 @@ import FiltersPanel from './components/FiltersPanel';
 import TableView from './components/TableView';
 import KPICards from './components/KPICards';
 import ChartsView from './components/ChartsView';
+import MinutesView from './components/MinutesView';
 
 export default function App() {
   const [data, setData] = useState<SheetData | null>(null);
   const [filters, setFilters] = useState<ColumnFilter[]>([]);
   const [globalSearch, setGlobalSearch] = useState('');
-  const [activeTab, setActiveTab] = useState<'tabla' | 'graficas'>('tabla');
+  const [activeTab, setActiveTab] = useState<'tabla' | 'graficas' | 'acta'>('tabla');
   const [isDark, setIsDark] = useState(false);
   const [isBlack, setIsBlack] = useState(false);
 
@@ -236,6 +237,19 @@ export default function App() {
                 <BarChart2 size={14} />
                 Gráficas / Dashboard
               </button>
+
+              <button
+                type="button"
+                onClick={() => setActiveTab('acta')}
+                className={`flex items-center gap-2 px-5 py-3 text-xs font-semibold cursor-pointer border-b-2 transition-all ${
+                  activeTab === 'acta'
+                    ? "border-indigo-500 text-indigo-400 font-bold"
+                    : `border-transparent ${isDark ? "text-slate-400 hover:text-slate-200" : "text-slate-500 hover:text-slate-800"}`
+                }`}
+              >
+                <FileText size={14} />
+                Modo Acta (Documentos)
+              </button>
             </div>
 
             {/* Dynamic Views switch */}
@@ -245,10 +259,16 @@ export default function App() {
                 rows={filteredRows}
                 isDark={isDark}
               />
-            ) : (
+            ) : activeTab === 'graficas' ? (
               <ChartsView
                 columns={data.columns}
                 filteredRows={filteredRows}
+                isDark={isDark}
+              />
+            ) : (
+              <MinutesView
+                columns={data.columns}
+                rows={filteredRows}
                 isDark={isDark}
               />
             )}
