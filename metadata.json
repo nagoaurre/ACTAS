@@ -1,0 +1,6 @@
+{
+  "name": "Visualizador de Google Sheets",
+  "description": "Una aplicación web moderna para visualizar, filtrar y generar gráficos interactivos directamente a partir de datos de Google Sheets.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
