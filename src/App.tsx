@@ -18,7 +18,7 @@ export default function App() {
   const [filters, setFilters] = useState<ColumnFilter[]>([]);
   const [globalSearch, setGlobalSearch] = useState('');
   const [activeTab, setActiveTab] = useState<'tabla' | 'graficas'>('tabla');
-  const [isDark, setIsDark] = useState(true);
+  const [isDark, setIsDark] = useState(false);
   const [isBlack, setIsBlack] = useState(false);
 
   // Synchronously filter data as filters or search text evolves
